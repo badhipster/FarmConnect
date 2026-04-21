@@ -1,4 +1,5 @@
 import { cn } from "@/lib/utils";
+import { useT } from "@/lib/i18n";
 
 type Status =
   | "Submitted"
@@ -30,16 +31,20 @@ const styles: Record<Status, string> = {
 };
 
 export function StatusPill({ status, className }: { status: Status; className?: string }) {
+  const { t, lang } = useT();
+  const en = status;
+  const hi = t(`st_${status}` as never);
+  const label = lang === "hi" ? `${en} · ${hi}` : en;
   return (
     <span
       className={cn(
-        "inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-semibold uppercase tracking-wide",
+        "inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[11px] font-semibold uppercase tracking-wide",
         styles[status],
         className,
       )}
     >
       <span className="h-1.5 w-1.5 rounded-full bg-current" />
-      {status}
+      {label}
     </span>
   );
 }
