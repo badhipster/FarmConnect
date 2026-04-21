@@ -1,38 +1,55 @@
-import { ChevronRight, TrendingUp, HelpCircle, FileText, LogOut } from "lucide-react";
+import { ChevronRight, TrendingUp, HelpCircle, FileText, LogOut, Users, Languages } from "lucide-react";
 import { AppHeader } from "@/components/AppHeader";
-import { farmer } from "@/lib/mock-data";
+import { useT } from "@/lib/i18n";
 
 export function MoreScreen({
+  name,
+  village,
+  phone,
   onSummary,
   onSupport,
+  onFpoGroup,
+  showFpo,
 }: {
+  name: string;
+  village: string;
+  phone: string;
   onSummary: () => void;
   onSupport: () => void;
+  onFpoGroup: () => void;
+  showFpo: boolean;
 }) {
+  const { t, lang, setLang } = useT();
   return (
     <div className="flex flex-col pb-6">
-      <AppHeader title="More" />
+      <AppHeader title={lang === "hi" ? "अधिक" : "More"} />
 
       <div className="px-4 py-4">
         <div className="flex items-center gap-3 rounded-2xl bg-gradient-to-br from-primary to-primary-glow p-5 text-primary-foreground shadow-md">
           <div className="flex h-14 w-14 items-center justify-center rounded-full bg-white/20 text-2xl font-bold">
-            R
+            {name.charAt(0)}
           </div>
           <div>
-            <div className="text-lg font-bold">{farmer.name}</div>
-            <div className="text-sm opacity-90">{farmer.village}</div>
-            <div className="text-xs opacity-80">{farmer.phone}</div>
+            <div className="text-lg font-bold">{name}</div>
+            <div className="text-sm opacity-90">{village}</div>
+            <div className="text-xs opacity-80">{phone}</div>
           </div>
         </div>
 
         <div className="mt-4 divide-y divide-border overflow-hidden rounded-2xl border border-border bg-card shadow-sm">
-          <Item icon={TrendingUp} label="Weekly Summary" onClick={onSummary} />
-          <Item icon={HelpCircle} label="Support / Request Callback" onClick={onSupport} />
-          <Item icon={FileText} label="Terms & Privacy" onClick={() => {}} />
-          <Item icon={LogOut} label="Logout" onClick={() => {}} danger />
+          {showFpo && <Item icon={Users} label={t("fpoGroup")} onClick={onFpoGroup} />}
+          <Item icon={TrendingUp} label={t("weeklySummary")} onClick={onSummary} />
+          <Item
+            icon={Languages}
+            label={lang === "hi" ? "Switch to English" : "हिन्दी में बदलें"}
+            onClick={() => setLang(lang === "en" ? "hi" : "en")}
+          />
+          <Item icon={HelpCircle} label={t("callback")} onClick={onSupport} />
+          <Item icon={FileText} label={lang === "hi" ? "नियम और गोपनीयता" : "Terms & Privacy"} onClick={() => {}} />
+          <Item icon={LogOut} label={lang === "hi" ? "लॉगआउट" : "Logout"} onClick={() => {}} danger />
         </div>
 
-        <p className="mt-6 text-center text-xs text-muted-foreground">FarmConnect · v0.1 prototype</p>
+        <p className="mt-6 text-center text-xs text-muted-foreground">FarmConnect · v0.2 prototype</p>
       </div>
     </div>
   );
