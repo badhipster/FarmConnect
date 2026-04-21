@@ -1,10 +1,12 @@
-import { Plus, Leaf, Truck, Wallet, TrendingUp, ChevronRight, BellRing } from "lucide-react";
+import { Plus, Leaf, Truck, Wallet, TrendingUp, ChevronRight, BellRing, CheckCircle2 } from "lucide-react";
 import { AppHeader } from "@/components/AppHeader";
-import { SummaryCard } from "@/components/SummaryCard";
 import { Button } from "@/components/ui/button";
-import { farmer, type Listing, type Order, type Payment } from "@/lib/mock-data";
+import { useT } from "@/lib/i18n";
+import type { Listing, Order, Payment } from "@/lib/mock-data";
 
 interface Props {
+  farmerName: string;
+  farmerVillage: string;
   listings: Listing[];
   orders: Order[];
   payments: Payment[];
@@ -17,6 +19,8 @@ interface Props {
 }
 
 export function HomeScreen({
+  farmerName,
+  farmerVillage,
   listings,
   orders,
   payments,
@@ -27,84 +31,146 @@ export function HomeScreen({
   onOpenSummary,
   onOpenSupport,
 }: Props) {
-  const activeCount = listings.filter((l) => l.status === "Active" || l.status === "Submitted" || l.status === "Matched").length;
-  const upcomingPickup = orders.find((o) => o.status === "Awaiting" || o.status === "Accepted" || o.status === "Scheduled");
-  const pendingPayout = payments
-    .filter((p) => p.status !== "Paid")
-    .reduce((s, p) => s + p.amount, 0);
+  const { t, tCrop, lang } = useT();
+  const activeCount = listings.filter((l) => ["Active", "Submitted", "Matched"].includes(l.status)).length;
+  const upcomingPickup = orders.find((o) => ["Awaiting", "Accepted", "Scheduled"].includes(o.status));
+  const pendingPayout = payments.filter((p) => p.status !== "Paid").reduce((s, p) => s + p.amount, 0);
+  const paidThisWeek = payments.filter((p) => p.status === "Paid").reduce((s, p) => s + p.amount, 0);
 
   return (
     <div className="flex flex-col">
-      <AppHeader title={farmer.name} subtitle={farmer.village} variant="hero" onHelp={onOpenSupport} />
+      <AppHeader
+        title={farmerName}
+        subtitle={farmerVillage}
+        variant="hero"
+        avatarInitial={farmerName.charAt(0)}
+        onHelp={onOpenSupport}
+        onNotifications={onOpenListings}
+      />
 
       {/* Stat strip */}
-      <div className="-mt-4 grid grid-cols-3 gap-2 px-4">
-        <div className="rounded-xl border border-border bg-card p-3 shadow-sm">
-          <div className="text-xl font-bold text-foreground">{activeCount}</div>
-          <div className="text-[11px] leading-tight text-muted-foreground">Active listings</div>
-        </div>
-        <div className="rounded-xl border border-border bg-card p-3 shadow-sm">
-          <div className="text-xl font-bold text-foreground">{upcomingPickup ? 1 : 0}</div>
-          <div className="text-[11px] leading-tight text-muted-foreground">Upcoming pickup</div>
-        </div>
-        <div className="rounded-xl border border-border bg-card p-3 shadow-sm">
-          <div className="text-xl font-bold text-foreground">₹{pendingPayout.toLocaleString("en-IN")}</div>
-          <div className="text-[11px] leading-tight text-muted-foreground">Pending payout</div>
-        </div>
+      <div className="-mt-5 grid grid-cols-3 gap-2 px-4">
+        <StatTile value={activeCount} label={t("activeListings")} />
+        <StatTile value={upcomingPickup ? 1 : 0} label={t("upcomingPickup")} />
+        <StatTile value={`₹${(pendingPayout / 1000).toFixed(1)}k`} label={t("pendingPayout")} />
       </div>
 
       <div className="px-4 pt-5">
-        <Button
-          onClick={onAddProduce}
-          className="h-14 w-full rounded-2xl text-base font-semibold shadow-md"
-          size="lg"
-        >
+        <Button onClick={onAddProduce} className="h-14 w-full rounded-2xl text-base font-semibold shadow-md" size="lg">
           <Plus className="h-5 w-5" />
-          Add Produce
+          {t("addProduce")}
         </Button>
-        <p className="mt-2 text-center text-xs text-muted-foreground">
-          Tell us what you have. We'll find a buyer.
-        </p>
+        <p className="mt-2 text-center text-xs text-muted-foreground">{t("addProduceHint")}</p>
       </div>
 
-      {/* Action banner */}
+      {/* Action-needed banner */}
       {upcomingPickup && upcomingPickup.status === "Awaiting" && (
         <button
           onClick={onOpenOrder}
-          className="mx-4 mt-5 flex items-center gap-3 rounded-2xl border border-status-matched/30 bg-status-matched-bg p-4 text-left animate-fade-in"
+          className="mx-4 mt-5 flex items-center gap-3 rounded-2xl border-2 border-status-matched/40 bg-status-matched-bg p-4 text-left animate-fade-in"
         >
-          <div className="flex h-10 w-10 items-center justify-center rounded-full bg-white">
+          <div className="flex h-11 w-11 items-center justify-center rounded-full bg-white">
             <BellRing className="h-5 w-5 text-status-matched" />
           </div>
-          <div className="flex-1">
-            <div className="text-sm font-semibold text-foreground">New order — action needed</div>
-            <div className="text-xs text-muted-foreground">
-              {upcomingPickup.crop} · Pickup {upcomingPickup.pickupDate}
+          <div className="min-w-0 flex-1">
+            <div className="text-sm font-bold text-foreground">{t("newOrder")}</div>
+            <div className="truncate text-xs text-muted-foreground">
+              {tCrop(upcomingPickup.crop)} · {upcomingPickup.pickupDate}
             </div>
           </div>
           <ChevronRight className="h-5 w-5 text-muted-foreground" />
         </button>
       )}
 
-      <div className="space-y-3 px-4 py-5">
-        <h2 className="px-1 text-sm font-semibold text-muted-foreground">Quick access</h2>
-        <SummaryCard icon={Leaf} label="My Listings" value={`${listings.length} items`} sublabel="Tap to see status" onClick={onOpenListings} />
-        <SummaryCard
-          icon={Truck}
-          label="Pickup Updates"
-          value={upcomingPickup ? upcomingPickup.crop : "No pickups"}
-          sublabel={upcomingPickup ? upcomingPickup.pickupDate : "All clear"}
-          onClick={onOpenOrder}
-        />
-        <SummaryCard
-          icon={Wallet}
-          label="Payments"
-          value={`₹${pendingPayout.toLocaleString("en-IN")} pending`}
-          sublabel="View payout proof"
+      {/* Pending payout card */}
+      {pendingPayout > 0 && (
+        <button
           onClick={onOpenPayments}
-        />
-        <SummaryCard icon={TrendingUp} label="Weekly Summary" value="This week" sublabel="Earnings & pickups" onClick={onOpenSummary} />
+          className="mx-4 mt-3 flex items-center gap-3 rounded-2xl border-2 border-status-processing/30 bg-status-processing-bg p-4 text-left"
+        >
+          <div className="flex h-11 w-11 items-center justify-center rounded-full bg-white">
+            <Wallet className="h-5 w-5 text-status-processing" />
+          </div>
+          <div className="min-w-0 flex-1">
+            <div className="text-sm font-bold text-foreground">{t("payoutOnTheWay")}</div>
+            <div className="text-xs text-muted-foreground">
+              ₹{pendingPayout.toLocaleString("en-IN")} · {t("pending")}
+            </div>
+          </div>
+          <ChevronRight className="h-5 w-5 text-muted-foreground" />
+        </button>
+      )}
+
+      {paidThisWeek > 0 && (
+        <div className="mx-4 mt-3 flex items-center gap-3 rounded-2xl border border-status-paid/20 bg-status-paid-bg p-3">
+          <CheckCircle2 className="h-5 w-5 text-status-paid" />
+          <div className="text-xs">
+            <span className="font-bold text-status-paid">₹{paidThisWeek.toLocaleString("en-IN")} {lang === "hi" ? "मिले" : "received"}</span>
+            <span className="text-muted-foreground"> · {t("thisWeek")}</span>
+          </div>
+        </div>
+      )}
+
+      <div className="px-4 py-5">
+        <h2 className="mb-3 px-1 text-xs font-bold uppercase tracking-wide text-muted-foreground">{t("quickAccess")}</h2>
+        <div className="grid grid-cols-2 gap-3">
+          <QuickTile icon={Leaf} label={t("myListings")} value={`${listings.length}`} sub={t("tapToSeeStatus")} onClick={onOpenListings} />
+          <QuickTile
+            icon={Truck}
+            label={t("pickupUpdates")}
+            value={upcomingPickup ? tCrop(upcomingPickup.crop) : t("noPickups")}
+            sub={upcomingPickup ? upcomingPickup.pickupDate : t("allClear")}
+            onClick={onOpenOrder}
+          />
+          <QuickTile
+            icon={Wallet}
+            label={t("payments")}
+            value={`₹${pendingPayout.toLocaleString("en-IN")}`}
+            sub={t("viewProof")}
+            onClick={onOpenPayments}
+          />
+          <QuickTile icon={TrendingUp} label={t("weeklySummary")} value={t("thisWeek")} sub={t("earningsPickups")} onClick={onOpenSummary} />
+        </div>
       </div>
     </div>
+  );
+}
+
+function StatTile({ value, label }: { value: string | number; label: string }) {
+  return (
+    <div className="rounded-2xl border border-border bg-card p-3 shadow-sm">
+      <div className="text-lg font-bold leading-tight text-foreground">{value}</div>
+      <div className="mt-0.5 text-[11px] leading-tight text-muted-foreground">{label}</div>
+    </div>
+  );
+}
+
+function QuickTile({
+  icon: Icon,
+  label,
+  value,
+  sub,
+  onClick,
+}: {
+  icon: typeof Leaf;
+  label: string;
+  value: string;
+  sub: string;
+  onClick: () => void;
+}) {
+  return (
+    <button
+      onClick={onClick}
+      className="flex flex-col items-start gap-2 rounded-2xl border border-border bg-card p-4 text-left shadow-sm transition-colors active:bg-muted"
+    >
+      <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-primary/10 text-primary">
+        <Icon className="h-5 w-5" />
+      </div>
+      <div className="w-full">
+        <div className="text-xs font-medium text-muted-foreground">{label}</div>
+        <div className="mt-0.5 truncate text-base font-bold text-foreground">{value}</div>
+        <div className="mt-0.5 truncate text-[11px] text-muted-foreground">{sub}</div>
+      </div>
+    </button>
   );
 }
