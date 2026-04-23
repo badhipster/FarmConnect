@@ -38,7 +38,7 @@ export function HomeScreen({
   const paidThisWeek = payments.filter((p) => p.status === "Paid").reduce((s, p) => s + p.amount, 0);
 
   return (
-    <div className="flex flex-col">
+    <div className="flex flex-col pb-6">
       <AppHeader
         title={farmerName}
         subtitle={farmerVillage}
@@ -48,37 +48,42 @@ export function HomeScreen({
         onNotifications={onOpenListings}
       />
 
-      {/* Stat strip */}
-      <div className="-mt-5 grid grid-cols-3 gap-2 px-4">
+      {/* Stat strip - Elevated via positioning and glassmorphism */}
+      <div className="-mt-8 lg:-mt-10 grid grid-cols-3 gap-3 lg:gap-6 px-4 lg:px-8 relative z-10">
         <StatTile value={activeCount} label={t("activeListings")} />
         <StatTile value={upcomingPickup ? 1 : 0} label={t("upcomingPickup")} />
         <StatTile value={`₹${(pendingPayout / 1000).toFixed(1)}k`} label={t("pendingPayout")} />
       </div>
 
-      <div className="px-4 pt-5">
-        <Button onClick={onAddProduce} className="h-14 w-full rounded-2xl text-base font-semibold shadow-md" size="lg">
-          <Plus className="h-5 w-5" />
+      <div className="px-4 lg:px-8 pt-6 lg:pt-8 w-full max-w-2xl mx-auto">
+        <Button 
+          onClick={onAddProduce} 
+          className="h-14 w-full rounded-2xl text-base font-bold shadow-[0_8px_30px_rgb(22,163,74,0.25)] transition-all duration-300 hover:shadow-[0_8px_30px_rgb(22,163,74,0.4)] hover:-translate-y-0.5 active:scale-95 bg-gradient-to-r from-primary to-green-500" 
+          size="lg"
+        >
+          <Plus className="h-6 w-6 mr-1" />
           {t("addProduce")}
         </Button>
-        <p className="mt-2 text-center text-xs text-muted-foreground">{t("addProduceHint")}</p>
+        <p className="mt-2.5 text-center text-xs font-medium text-slate-500">{t("addProduceHint")}</p>
       </div>
 
       {/* Action-needed banner */}
       {upcomingPickup && upcomingPickup.status === "Awaiting" && (
         <button
           onClick={onOpenOrder}
-          className="mx-4 mt-5 flex items-center gap-3 rounded-2xl border-2 border-status-matched/40 bg-status-matched-bg p-4 text-left animate-fade-in"
+          className="group mx-4 lg:mx-8 mt-6 lg:mt-8 flex items-center gap-4 rounded-3xl border border-orange-300/40 bg-gradient-to-r from-orange-50/90 to-amber-50/80 p-5 lg:p-6 text-left shadow-sm backdrop-blur-xl transition-all duration-300 hover:-translate-y-1 hover:shadow-md hover:border-orange-400/50 animate-fade-in relative overflow-hidden"
         >
-          <div className="flex h-11 w-11 items-center justify-center rounded-full bg-white">
-            <BellRing className="h-5 w-5 text-status-matched" />
+          <div className="absolute left-0 top-0 bottom-0 w-1.5 bg-orange-400" />
+          <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-white shadow-sm border border-orange-200 transition-transform duration-300 group-hover:scale-110 ml-1">
+            <BellRing className="h-5 w-5 text-orange-500 animate-[wiggle_1s_ease-in-out_infinite]" />
           </div>
           <div className="min-w-0 flex-1">
-            <div className="text-sm font-bold text-foreground">{t("newOrder")}</div>
-            <div className="truncate text-xs text-muted-foreground">
+            <div className="text-[15px] font-black text-slate-900 tracking-tight">{t("newOrder")}</div>
+            <div className="mt-1 truncate text-[11px] font-bold text-orange-600 bg-orange-500/10 inline-flex px-2 py-0.5 rounded-md">
               {tCrop(upcomingPickup.crop)} · {upcomingPickup.pickupDate}
             </div>
           </div>
-          <ChevronRight className="h-5 w-5 text-muted-foreground" />
+          <ChevronRight className="h-5 w-5 text-slate-300 transition-transform duration-300 group-hover:translate-x-1 group-hover:text-orange-500" />
         </button>
       )}
 
@@ -86,34 +91,37 @@ export function HomeScreen({
       {pendingPayout > 0 && (
         <button
           onClick={onOpenPayments}
-          className="mx-4 mt-3 flex items-center gap-3 rounded-2xl border-2 border-status-processing/30 bg-status-processing-bg p-4 text-left"
+          className="group mx-4 lg:mx-8 mt-4 lg:mt-6 flex items-center gap-4 rounded-3xl border border-blue-300/40 bg-gradient-to-r from-blue-50/90 to-indigo-50/80 p-5 lg:p-6 text-left shadow-sm backdrop-blur-xl transition-all duration-300 hover:-translate-y-1 hover:shadow-md hover:border-blue-400/50 relative overflow-hidden"
         >
-          <div className="flex h-11 w-11 items-center justify-center rounded-full bg-white">
-            <Wallet className="h-5 w-5 text-status-processing" />
+          <div className="absolute left-0 top-0 bottom-0 w-1.5 bg-blue-500" />
+          <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-white shadow-sm border border-blue-200 transition-transform duration-300 group-hover:scale-110 ml-1">
+            <Wallet className="h-5 w-5 text-blue-600" />
           </div>
           <div className="min-w-0 flex-1">
-            <div className="text-sm font-bold text-foreground">{t("payoutOnTheWay")}</div>
-            <div className="text-xs text-muted-foreground">
+            <div className="text-[15px] font-black text-slate-900 tracking-tight">{t("payoutOnTheWay")}</div>
+            <div className="mt-1 text-[11px] font-bold text-blue-700 bg-blue-500/10 inline-flex px-2 py-0.5 rounded-md">
               ₹{pendingPayout.toLocaleString("en-IN")} · {t("pending")}
             </div>
           </div>
-          <ChevronRight className="h-5 w-5 text-muted-foreground" />
+          <ChevronRight className="h-5 w-5 text-slate-300 transition-transform duration-300 group-hover:translate-x-1 group-hover:text-blue-500" />
         </button>
       )}
 
       {paidThisWeek > 0 && (
-        <div className="mx-4 mt-3 flex items-center gap-3 rounded-2xl border border-status-paid/20 bg-status-paid-bg p-3">
-          <CheckCircle2 className="h-5 w-5 text-status-paid" />
-          <div className="text-xs">
-            <span className="font-bold text-status-paid">₹{paidThisWeek.toLocaleString("en-IN")} {lang === "hi" ? "मिले" : "received"}</span>
-            <span className="text-muted-foreground"> · {t("thisWeek")}</span>
+        <div className="mx-4 lg:mx-8 mt-4 lg:mt-6 flex items-center gap-3 rounded-2xl border border-green-300/40 bg-gradient-to-r from-green-50/90 to-emerald-50/80 p-5 lg:p-6 backdrop-blur-xl shadow-sm hover:-translate-y-1 transition-all duration-300">
+          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-white shadow-sm border border-green-200">
+            <CheckCircle2 className="h-5 w-5 text-green-600" />
+          </div>
+          <div className="text-[13px] font-semibold flex flex-col">
+            <span className="font-black text-green-800 text-[15px]">₹{paidThisWeek.toLocaleString("en-IN")} {lang === "hi" ? "मिले" : "received"}</span>
+            <span className="text-green-600 font-bold">{t("thisWeek")}</span>
           </div>
         </div>
       )}
 
-      <div className="px-4 py-5">
-        <h2 className="mb-3 px-1 text-xs font-bold uppercase tracking-wide text-muted-foreground">{t("quickAccess")}</h2>
-        <div className="grid grid-cols-2 gap-3">
+      <div className="px-4 lg:px-8 py-6 lg:py-10 mt-2">
+        <h2 className="mb-4 lg:mb-6 px-1 text-[11px] lg:text-sm font-extrabold uppercase tracking-wider text-slate-400">{t("quickAccess")}</h2>
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3.5 lg:gap-6">
           <QuickTile icon={Leaf} label={t("myListings")} value={`${listings.length}`} sub={t("tapToSeeStatus")} onClick={onOpenListings} />
           <QuickTile
             icon={Truck}
@@ -138,9 +146,9 @@ export function HomeScreen({
 
 function StatTile({ value, label }: { value: string | number; label: string }) {
   return (
-    <div className="rounded-2xl border border-border bg-card p-3 shadow-sm">
-      <div className="text-lg font-bold leading-tight text-foreground">{value}</div>
-      <div className="mt-0.5 text-[11px] leading-tight text-muted-foreground">{label}</div>
+    <div className="flex flex-col items-center justify-center rounded-3xl border border-white/60 bg-white/70 p-4 shadow-sm backdrop-blur-xl transition-all duration-300 hover:shadow-md hover:-translate-y-1 hover:bg-white/90 group">
+      <div className="text-[22px] font-black leading-tight text-slate-800 transition-colors group-hover:text-primary">{value}</div>
+      <div className="mt-1 text-center text-[10px] font-extrabold uppercase tracking-widest text-slate-500">{label}</div>
     </div>
   );
 }
@@ -161,15 +169,15 @@ function QuickTile({
   return (
     <button
       onClick={onClick}
-      className="flex flex-col items-start gap-2 rounded-2xl border border-border bg-card p-4 text-left shadow-sm transition-colors active:bg-muted"
+      className="group flex flex-col items-start gap-4 rounded-3xl border border-white/60 bg-white/70 p-5 text-left shadow-sm backdrop-blur-xl transition-all duration-300 hover:-translate-y-1 hover:bg-white hover:shadow-md active:scale-95 relative overflow-hidden"
     >
-      <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-primary/10 text-primary">
+      <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-primary/10 to-primary/5 text-primary transition-all duration-300 group-hover:scale-110 group-hover:from-primary/20 group-hover:to-primary/10 shadow-inner">
         <Icon className="h-5 w-5" />
       </div>
-      <div className="w-full">
-        <div className="text-xs font-medium text-muted-foreground">{label}</div>
-        <div className="mt-0.5 truncate text-base font-bold text-foreground">{value}</div>
-        <div className="mt-0.5 truncate text-[11px] text-muted-foreground">{sub}</div>
+      <div className="w-full mt-1">
+        <div className="text-[11px] font-extrabold uppercase tracking-wider text-slate-500">{label}</div>
+        <div className="mt-1 truncate text-xl font-black text-slate-900 group-hover:text-primary transition-colors">{value}</div>
+        <div className="mt-1 truncate text-[11px] font-bold text-primary/60 bg-primary/5 rounded-md px-2 py-0.5 inline-flex">{sub}</div>
       </div>
     </button>
   );

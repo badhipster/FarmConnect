@@ -22,8 +22,6 @@ export const dict: Dict = {
   rolePickSub: { en: "Choose how you want to use FarmConnect", hi: "FarmConnect का उपयोग कैसे करना है चुनें" },
   roleFarmer: { en: "Farmer", hi: "किसान" },
   roleFarmerDesc: { en: "Sell your produce directly", hi: "अपनी उपज सीधे बेचें" },
-  roleFpo: { en: "FPO Coordinator", hi: "FPO समन्वयक" },
-  roleFpoDesc: { en: "Manage many farmers together", hi: "कई किसानों का प्रबंधन करें" },
 
   // Language
   langTitle: { en: "Choose language", hi: "भाषा चुनें" },
@@ -31,9 +29,7 @@ export const dict: Dict = {
 
   // Onboarding
   onbTitle: { en: "Tell us about you", hi: "अपने बारे में बताएं" },
-  onbFpoTitle: { en: "About your FPO", hi: "अपने FPO के बारे में" },
   fullName: { en: "Full name", hi: "पूरा नाम" },
-  fpoName: { en: "FPO name", hi: "FPO का नाम" },
   village: { en: "Village", hi: "गाँव" },
   phone: { en: "Mobile number", hi: "मोबाइल नंबर" },
   primaryCrops: { en: "Primary crops", hi: "मुख्य फसलें" },
@@ -126,13 +122,7 @@ export const dict: Dict = {
   st_Scheduled: { en: "Scheduled", hi: "तय" },
   st_Collected: { en: "Collected", hi: "उठाया" },
 
-  // FPO
-  fpoGroup: { en: "FPO Group", hi: "FPO समूह" },
-  groupSupply: { en: "Group supply", hi: "समूह आपूर्ति" },
-  groupPickup: { en: "Group pickups", hi: "समूह पिकअप" },
-  groupPayout: { en: "Group payout", hi: "समूह भुगतान" },
-  farmers: { en: "farmers", hi: "किसान" },
-  addFarmerSupply: { en: "Add farmer supply", hi: "किसान आपूर्ति जोड़ें" },
+  // FPO (Removed)
 };
 
 export const cropI18n: Record<string, { hi: string }> = {

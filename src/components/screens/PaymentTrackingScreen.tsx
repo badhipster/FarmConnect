@@ -22,87 +22,118 @@ export function PaymentTrackingScreen({
   const pending = payments.filter((p) => p.status !== "Paid").reduce((s, p) => s + p.amount, 0);
 
   return (
-    <div className="flex flex-col pb-6">
+    <div className="flex flex-col min-h-screen bg-slate-50/50 pb-10">
       <AppHeader title={t("payments")} onBack={onBack} onHelp={onSupport} />
 
-      <div className="grid grid-cols-2 gap-3 px-4 py-4">
-        <div className="rounded-2xl border border-status-paid/20 bg-status-paid-bg p-4">
-          <div className="flex items-center gap-2">
-            <CheckCircle2 className="h-4 w-4 text-status-paid" />
-            <span className="text-xs font-bold uppercase text-status-paid">{t("paid")}</span>
+      <div className="flex-1 space-y-6 px-4 py-6">
+        {/* Payment Stats Grid */}
+        <div className="grid grid-cols-2 gap-4">
+          <div className="rounded-[2rem] border border-white/60 bg-white/70 p-5 shadow-sm backdrop-blur-xl">
+            <div className="flex items-center gap-2 mb-3">
+              <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-emerald-100/50">
+                <CheckCircle2 className="h-4 w-4 text-emerald-600" />
+              </div>
+              <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">{t("paid")}</span>
+            </div>
+            <div className="text-2xl font-black text-slate-900 tracking-tight">₹{paid.toLocaleString("en-IN")}</div>
           </div>
-          <div className="mt-2 text-2xl font-bold text-foreground">₹{paid.toLocaleString("en-IN")}</div>
-        </div>
-        <div className="rounded-2xl border border-status-pending/20 bg-status-pending-bg p-4">
-          <div className="flex items-center gap-2">
-            <Clock className="h-4 w-4 text-status-pending" />
-            <span className="text-xs font-bold uppercase text-status-pending">{t("pending")}</span>
+          <div className="rounded-[2rem] border border-white/60 bg-white/70 p-5 shadow-sm backdrop-blur-xl">
+            <div className="flex items-center gap-2 mb-3">
+              <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-amber-100/50">
+                <Clock className="h-4 w-4 text-amber-600" />
+              </div>
+              <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">{t("pending")}</span>
+            </div>
+            <div className="text-2xl font-black text-slate-900 tracking-tight">₹{pending.toLocaleString("en-IN")}</div>
           </div>
-          <div className="mt-2 text-2xl font-bold text-foreground">₹{pending.toLocaleString("en-IN")}</div>
         </div>
-      </div>
 
-      {payout && (
-        <div className="mx-4 flex items-center gap-3 rounded-2xl border border-border bg-card p-4 shadow-sm">
-          <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-primary/10 text-primary">
-            <Landmark className="h-5 w-5" />
-          </div>
-          <div className="min-w-0 flex-1">
-            <div className="text-xs font-medium text-muted-foreground">{t("bankAccount")}</div>
-            <div className="truncate text-sm font-bold text-foreground">
-              {payout.method === "upi"
-                ? payout.upi
-                : `${payout.holder} · ••${payout.accountNumber?.slice(-4)}`}
+        {/* Bank Account / Payout Info */}
+        {payout && (
+          <div className="group flex items-center gap-4 rounded-3xl border border-white/60 bg-white/70 p-5 shadow-sm backdrop-blur-xl transition-all hover:bg-white">
+            <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-primary/10 to-primary/5 text-primary shadow-inner">
+              <Landmark className="h-6 w-6" />
+            </div>
+            <div className="min-w-0 flex-1">
+              <div className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-0.5">{t("bankAccount")}</div>
+              <div className="truncate text-[15px] font-black text-slate-900">
+                {payout.method === "upi"
+                  ? payout.upi
+                  : `${payout.holder} · ••${payout.accountNumber?.slice(-4)}`}
+              </div>
+            </div>
+            <div className="flex flex-col items-end gap-1">
+              <span className="rounded-full bg-emerald-100 px-2.5 py-1 text-[10px] font-black uppercase tracking-wider text-emerald-700 shadow-sm border border-emerald-200/20">
+                {lang === "hi" ? "सक्रिय" : "Active"}
+              </span>
             </div>
           </div>
-          <span className="rounded-full bg-status-paid-bg px-2 py-1 text-[10px] font-bold uppercase text-status-paid">
-            {lang === "hi" ? "सक्रिय" : "Active"}
-          </span>
-        </div>
-      )}
+        )}
 
-      <div className="px-4 py-5">
-        <h2 className="mb-3 px-1 text-xs font-bold uppercase tracking-wide text-muted-foreground">
-          {t("recentActivity")}
-        </h2>
-        <div className="space-y-3">
-          {payments.map((p) => (
-            <div key={p.id} className="rounded-2xl border border-border bg-card p-4 shadow-sm">
-              <div className="flex items-start justify-between gap-2">
-                <div className="min-w-0">
-                  <div className="text-base font-bold text-foreground">{tCrop(p.crop)}</div>
-                  <div className="text-xs text-muted-foreground">#{p.orderId} · {p.timestamp}</div>
-                </div>
-                <StatusPill status={p.status} />
-              </div>
-              <div className="mt-3 flex items-end justify-between">
-                <div className="text-2xl font-bold text-foreground">₹{p.amount.toLocaleString("en-IN")}</div>
-                {p.upiRef && (
-                  <div className="text-right text-[11px] text-muted-foreground">
-                    <div className="font-semibold">UPI</div>
-                    <div className="font-mono">{p.upiRef}</div>
+        {/* Recent Activity List */}
+        <div className="space-y-4">
+          <div className="flex items-center justify-between px-1">
+            <h2 className="text-[11px] font-black uppercase tracking-[0.15em] text-slate-400">{t("recentActivity")}</h2>
+            <span className="text-[10px] font-bold text-slate-400 bg-slate-100 px-2 py-0.5 rounded-full">{payments.length} items</span>
+          </div>
+          
+          <div className="space-y-4">
+            {payments.map((p) => (
+              <div 
+                key={p.id} 
+                className="group relative rounded-3xl border border-white/60 bg-white/70 p-5 shadow-sm backdrop-blur-xl transition-all duration-300 hover:bg-white active:scale-[0.98]"
+              >
+                <div className="flex items-start justify-between gap-3">
+                  <div className="min-w-0">
+                    <h3 className="text-[17px] font-black text-slate-900 tracking-tight group-hover:text-primary transition-colors">{tCrop(p.crop)}</h3>
+                    <div className="mt-1 text-[11px] font-bold text-slate-400 uppercase tracking-wider flex items-center gap-2">
+                      <span className="bg-slate-100 px-1.5 py-0.5 rounded">#{p.orderId}</span>
+                      <span>{p.timestamp}</span>
+                    </div>
                   </div>
-                )}
+                  <StatusPill status={p.status} />
+                </div>
+                
+                <div className="mt-5 flex items-end justify-between border-t border-slate-100/60 pt-4">
+                  <div className="text-2xl font-black text-slate-900 tracking-tight">₹{p.amount.toLocaleString("en-IN")}</div>
+                  {p.upiRef && (
+                    <div className="text-right">
+                      <div className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-0.5">UPI REF</div>
+                      <div className="font-mono text-[11px] font-bold text-slate-500 bg-slate-50 px-2 py-1 rounded-lg border border-slate-100">
+                        {p.upiRef}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Support Section */}
+        <div className="rounded-[2.5rem] border border-primary/20 bg-primary/5 p-6 shadow-inner relative overflow-hidden">
+          <div className="absolute top-0 right-0 p-8 opacity-10 pointer-events-none">
+            <Phone className="h-24 w-24 -rotate-12" />
+          </div>
+          <div className="relative z-10">
+            <div className="flex items-start gap-4">
+              <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-white shadow-sm border border-primary/10">
+                <Phone className="h-6 w-6 text-primary" />
+              </div>
+              <div className="min-w-0 flex-1">
+                <div className="text-lg font-black text-slate-900 tracking-tight">{t("paymentIssue")}</div>
+                <p className="mt-1 text-sm font-medium text-slate-500 leading-snug">{t("callUs")}</p>
               </div>
             </div>
-          ))}
-        </div>
-      </div>
-
-      <div className="mx-4 rounded-2xl border-2 border-accent/30 bg-accent/10 p-4">
-        <div className="flex items-start gap-3">
-          <div className="flex h-11 w-11 items-center justify-center rounded-full bg-accent text-accent-foreground">
-            <Phone className="h-5 w-5" />
-          </div>
-          <div className="min-w-0 flex-1">
-            <div className="text-sm font-bold text-foreground">{t("paymentIssue")}</div>
-            <div className="text-xs text-muted-foreground">{t("callUs")}</div>
+            <Button 
+              onClick={onSupport} 
+              className="mt-6 h-14 w-full rounded-2xl bg-primary text-white font-black uppercase tracking-wider shadow-lg shadow-primary/20 hover:shadow-xl hover:translate-y-[-2px] transition-all flex items-center justify-center gap-3"
+            >
+              {t("callback")}
+              <ChevronRight className="h-5 w-5" />
+            </Button>
           </div>
         </div>
-        <Button onClick={onSupport} className="mt-3 h-12 w-full rounded-xl bg-accent text-accent-foreground hover:bg-accent/90">
-          {t("callback")}
-          <ChevronRight className="h-4 w-4" />
-        </Button>
       </div>
     </div>
   );

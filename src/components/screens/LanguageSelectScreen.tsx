@@ -12,39 +12,54 @@ export function LanguageSelectScreen({ onContinue }: { onContinue: () => void })
   ];
 
   return (
-    <div className="flex min-h-screen flex-col bg-background">
-      <div className="px-5 pt-6">
-        <div className="text-sm font-semibold text-primary">FarmConnect</div>
+    <div className="flex min-h-screen flex-col bg-slate-50/50 pb-10">
+      <div className="px-6 pt-12 pb-8 text-center">
+        <div className="inline-flex h-16 w-16 items-center justify-center rounded-[1.5rem] bg-gradient-to-br from-primary to-primary-glow shadow-lg shadow-primary/20 mb-4 ring-4 ring-white">
+          <span className="text-3xl font-black text-white">FC</span>
+        </div>
+        <div className="text-[11px] font-black uppercase tracking-[0.3em] text-slate-400 ml-1">FarmConnect</div>
       </div>
-      <div className="flex-1 px-5 pt-8">
-        <h1 className="text-2xl font-bold text-foreground">{t("langTitle")}</h1>
-        <p className="mt-1.5 text-sm text-muted-foreground">{t("langSub")}</p>
 
-        <div className="mt-7 space-y-3">
-          {options.map((o) => (
-            <button
-              key={o.id}
-              onClick={() => setLang(o.id)}
-              className={cn(
-                "flex w-full items-center justify-between rounded-2xl border-2 bg-card p-5 text-left transition-all",
-                lang === o.id ? "border-primary bg-primary/5" : "border-border",
-              )}
-            >
-              <div>
-                <div className="text-xl font-bold text-foreground">{o.label}</div>
-                <div className="text-xs text-muted-foreground">{o.sub}</div>
-              </div>
-              {lang === o.id && (
-                <div className="flex h-7 w-7 items-center justify-center rounded-full bg-primary text-primary-foreground">
-                  <Check className="h-4 w-4" />
+      <div className="flex-1 px-6 pt-4">
+        <h1 className="text-3xl font-black text-slate-900 tracking-tight text-center">{t("langTitle")}</h1>
+        <p className="mt-2 text-[15px] font-medium text-slate-500 text-center leading-relaxed max-w-[280px] mx-auto">{t("langSub")}</p>
+
+        <div className="mt-12 space-y-4">
+          {options.map((o) => {
+            const active = lang === o.id;
+            return (
+              <button
+                key={o.id}
+                onClick={() => setLang(o.id)}
+                className={cn(
+                  "group flex w-full items-center justify-between rounded-3xl border p-6 text-left transition-all duration-300 active:scale-[0.98] shadow-sm",
+                  active 
+                    ? "border-primary bg-primary/10 shadow-inner ring-1 ring-primary/20" 
+                    : "border-white/60 bg-white/70 backdrop-blur-xl hover:bg-white"
+                )}
+              >
+                <div>
+                  <div className={cn(
+                    "text-2xl font-black tracking-tight mb-0.5 transition-colors",
+                    active ? "text-primary" : "text-slate-800"
+                  )}>{o.label}</div>
+                  <div className="text-[11px] font-black uppercase tracking-widest text-slate-400">{o.sub}</div>
                 </div>
-              )}
-            </button>
-          ))}
+                {active ? (
+                  <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-primary text-white shadow-lg shadow-primary/20 animate-in zoom-in-50 duration-300">
+                    <Check className="h-5 w-5" strokeWidth={3} />
+                  </div>
+                ) : (
+                  <div className="h-10 w-10 rounded-2xl border-2 border-slate-100 group-hover:border-slate-200 transition-colors" />
+                )}
+              </button>
+            );
+          })}
         </div>
       </div>
-      <div className="p-5">
-        <Button onClick={onContinue} className="h-14 w-full rounded-2xl text-base font-semibold">
+
+      <div className="p-6">
+        <Button onClick={onContinue} className="h-16 w-full rounded-2xl text-base font-black uppercase tracking-wider shadow-lg shadow-primary/20 transition-all hover:translate-y-[-2px]">
           {t("continue")}
         </Button>
       </div>
