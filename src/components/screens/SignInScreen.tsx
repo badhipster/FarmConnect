@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useAuth } from "@/hooks/useAuth";
+import { isDemoMode } from "@/lib/supabase";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useToast } from "@/hooks/use-toast";
 import { Sprout, Users, User } from "lucide-react";
@@ -62,6 +63,14 @@ export function SignInScreen() {
             <p className="mt-1 text-[11px] font-black uppercase tracking-[0.3em] text-slate-400">Rural Marketplace</p>
           </div>
         </div>
+
+        {isDemoMode && (
+          <div className="rounded-2xl border border-primary/20 bg-primary/5 px-4 py-3 text-center text-[12px] font-semibold text-primary">
+            Demo mode — any email and password will sign you in. Try both
+            <span className="font-black"> Farmer </span>and
+            <span className="font-black"> FPO </span>roles via Sign Up.
+          </div>
+        )}
 
         {/* Auth Card */}
         <div className="rounded-[2.5rem] border border-white/60 bg-white/70 shadow-2xl shadow-slate-200/50 backdrop-blur-xl overflow-hidden ring-1 ring-slate-100">
