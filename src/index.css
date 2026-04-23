@@ -59,6 +59,35 @@
     --sidebar-accent-foreground: 240 5.9% 10%;
     --sidebar-border: 220 13% 91%;
     --sidebar-ring: 217.2 91.2% 59.8%;
+
+    /* ─── Agri-Rural Professional tokens (Stitch) ───
+       Scoped tokens used by Dashboard / Pipeline / Summary only.
+       Do not reference these from Farmers or shared farmer screens. */
+    --ar-surface:                    #faf8ff;
+    --ar-surface-container-lowest:   #ffffff;
+    --ar-surface-container-low:      #f2f3ff;
+    --ar-surface-container:          #eaedff;
+    --ar-surface-container-high:     #e2e7ff;
+    --ar-surface-variant:            #dae2fd;
+    --ar-on-surface:                 #131b2e;
+    --ar-on-surface-variant:         #3e4942;
+    --ar-outline:                    #6e7a71;
+    --ar-outline-variant:            #bdcabf;
+    --ar-primary:                    #006a43;
+    --ar-on-primary:                 #ffffff;
+    --ar-primary-container:          #168557;
+    --ar-on-primary-container:       #f6fff6;
+    --ar-secondary:                  #944a00;
+    --ar-on-secondary:               #ffffff;
+    --ar-secondary-container:        #fc8f34;
+    --ar-on-secondary-container:     #663100;
+    --ar-tertiary:                   #525f5a;
+    --ar-error:                      #ba1a1a;
+    --ar-error-container:            #ffdad6;
+    --ar-on-error-container:         #93000a;
+    --ar-success-bg:                 color-mix(in srgb, var(--ar-primary) 12%, var(--ar-surface));
+    --ar-warning-bg:                 color-mix(in srgb, var(--ar-secondary-container) 20%, var(--ar-surface));
+    --ar-info-bg:                    var(--ar-surface-container);
   }
 
   .dark {
@@ -95,7 +124,56 @@
 }
 
 @layer components {
-  .mobile-frame {
-    @apply mx-auto w-full max-w-md min-h-screen bg-background relative shadow-xl;
+  .main-container {
+    @apply mx-auto w-full min-h-screen bg-background relative;
+  }
+
+  /* Agri-Rural scope: apply to Dashboard / Pipeline / Summary roots only. */
+  .ar-scope {
+    background-color: var(--ar-surface);
+    color: var(--ar-on-surface);
+    font-variant-numeric: tabular-nums;
+  }
+  .ar-scope .ar-card {
+    background: var(--ar-surface-container-lowest);
+    border: 1px solid var(--ar-outline-variant);
+    border-radius: 14px;
+  }
+  .ar-scope .ar-btn-primary {
+    background: var(--ar-primary);
+    color: var(--ar-on-primary);
+    border-radius: 10px;
+    min-height: 44px;
+    transition: background 150ms ease;
+  }
+  .ar-scope .ar-btn-primary:hover { background: var(--ar-primary-container); }
+  .ar-scope .ar-btn-primary:focus-visible {
+    outline: 2px solid var(--ar-primary);
+    outline-offset: 2px;
+  }
+  .ar-scope .ar-btn-primary:disabled { opacity: 0.38; cursor: not-allowed; }
+  .ar-scope .ar-btn-secondary {
+    background: var(--ar-surface-container);
+    color: var(--ar-on-surface);
+    border: 1px solid var(--ar-outline-variant);
+    border-radius: 10px;
+    min-height: 44px;
+    transition: background 150ms ease;
+  }
+  .ar-scope .ar-btn-secondary:hover { background: var(--ar-surface-container-high); }
+  .ar-scope .ar-btn-secondary:focus-visible {
+    outline: 2px solid var(--ar-primary);
+    outline-offset: 2px;
+  }
+  .ar-scope .ar-input {
+    background: #fff;
+    border: 1px solid var(--ar-outline-variant);
+    border-radius: 10px;
+    min-height: 44px;
+    padding: 0 12px;
+  }
+  .ar-scope .ar-input:focus-visible {
+    outline: 2px solid var(--ar-primary);
+    outline-offset: 0;
   }
 }
